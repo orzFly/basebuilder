@@ -1,0 +1,64 @@
+#!/bin/bash -e
+
+SOURCE_DIR=/var/lib/tsuru
+$SOURCE_DIR/base/install
+apt-get install -y apache2 apache2-dev libxml2-dev libcurl4-openssl-dev libjpeg-dev libpng-dev libxpm-dev libmysqlclient-dev libpq-dev libicu-dev libfreetype6-dev libldap2-dev libxslt-dev build-essential
+mkdir -p /usr/include/freetype2/freetype
+ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h
+
+pushd /tmp
+wget http://php.net/distributions/php-5.3.29.tar.gz
+tar -zxvf php-5.3.29.tar.gz
+cd php-5.3.29
+
+./configure \
+  --prefix=/usr/local/php \
+  --with-apxs2=/usr/bin/apxs \
+  --enable-mbstring \
+  --with-curl \
+  --with-openssl \
+  --with-xmlrpc \
+  --enable-soap \
+  --enable-zip \
+  --with-gd \
+  --with-jpeg-dir \
+  --with-png-dir \
+  --with-mysql \
+  --enable-embedded-mysqli \
+  --with-freetype-dir \
+  --enable-intl \
+  --with-xsl
+
+# http://www.gcos.me/2012-10-19_how-to-compile-php53-on-64bit-linux-macos.html
+sed -i '/^BUILD_/ s/\$(CC)/\$(CXX)/g' Makefile
+
+make
+make install
+
+cp php.ini-production /usr/local/lib/php.ini
+ln -s /usr/local/lib/php.ini /etc
+
+cat <<EOF > /etc/apache2/mods-available/php5.conf
+<FilesMatch ".+\.ph(p[345]?|t|tml)$">
+    SetHandler application/x-httpd-php
+</FilesMatch>
+<FilesMatch ".+\.phps$">
+    SetHandler application/x-httpd-php-source
+    # Deny access to raw php sources by default
+    # To re-enable it's recommended to enable access to the files
+    # only in specific virtual host or directory
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+# Deny access to files without filename (e.g. '.php')
+<FilesMatch "^\.ph(p[345]?|t|tml|ps)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+EOF
+
+cat <<EOF > /etc/apache2/mods-available/php5.load
+LoadModule php5_module /usr/lib/apache2/modules/libphp5.so
+EOF
+
+popd
