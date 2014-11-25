@@ -2,7 +2,7 @@
 
 SOURCE_DIR=/var/lib/tsuru
 $SOURCE_DIR/base/install
-apt-get install -y apache2 apache2-dev libxml2-dev libcurl4-openssl-dev libjpeg-dev libpng-dev libxpm-dev libmysqlclient-dev libpq-dev libicu-dev libfreetype6-dev libldap2-dev libxslt-dev build-essential
+apt-get install -y apache2 apache2-dev libxml2-dev libcurl4-openssl-dev libjpeg-dev libpng-dev libxpm-dev libmysqlclient-dev libpq-dev libicu-dev libfreetype6-dev libldap2-dev libxslt-dev build-essential mysql-client
 mkdir -p /usr/include/freetype2/freetype
 ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h
 
@@ -24,6 +24,7 @@ cd php-5.3.29
   --with-jpeg-dir \
   --with-png-dir \
   --with-mysql \
+  --with-pdo-mysql \
   --enable-embedded-mysqli \
   --with-freetype-dir \
   --enable-intl \
