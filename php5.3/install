@@ -2,7 +2,7 @@
 
 SOURCE_DIR=/var/lib/tsuru
 $SOURCE_DIR/base/install
-apt-get install -y apache2 apache2-dev libxml2-dev libcurl4-openssl-dev libjpeg-dev libpng-dev libxpm-dev libmysqlclient-dev libpq-dev libicu-dev libfreetype6-dev libldap2-dev libxslt-dev build-essential mysql-client
+apt-get install -y apache2 apache2-dev libxml2-dev libcurl4-openssl-dev libjpeg-dev libpng-dev libxpm-dev libmysqlclient-dev libpq-dev libicu-dev libfreetype6-dev libldap2-dev libxslt-dev build-essential mysql-client libz-dev libmcrypt-dev
 mkdir -p /usr/include/freetype2/freetype
 ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h
 
@@ -28,7 +28,9 @@ cd php-5.3.29
   --enable-embedded-mysqli \
   --with-freetype-dir \
   --enable-intl \
-  --with-xsl
+  --with-xsl \
+  --with-zlib \
+  --with-mcrypt
 
 # http://www.gcos.me/2012-10-19_how-to-compile-php53-on-64bit-linux-macos.html
 sed -i '/^BUILD_/ s/\$(CC)/\$(CXX)/g' Makefile
