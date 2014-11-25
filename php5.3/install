@@ -66,7 +66,7 @@ EOF
 
 a2dismod mpm_event
 a2enmod mpm_prefork
-a2enmod php
+a2enmod php5
 
 mkdir -p /var/lock/apache2
 chmod -R 777 /var/lock/apache2
